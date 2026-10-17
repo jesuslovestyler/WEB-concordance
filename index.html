@@ -380,12 +380,16 @@
         /* ---------- flatten the verse dataset ---------- */
         var REFS = [];
         var TEXTS = [];
+        var DEEP = [];
         P.chapters.forEach(function (chaps, bi) {
           chaps.forEach(function (ch, ci) {
             var vs = ch.split("\n");
             for (var vi = 0; vi < vs.length; vi++) {
               REFS.push(P.books[bi] + " " + (ci + 1) + ":" + (vi + 1));
               TEXTS.push(vs[vi]);
+              DEEP.push(
+                APP_URL + "#" + encodeURIComponent(P.books[bi]) + "/" + (ci + 1) + "/" + (vi + 1)
+              );
             }
           });
         });
@@ -554,7 +558,7 @@
           for (var i = cur.shown; i < end; i++) {
             var gid = cur.ids[i];
             html +=
-              '<div class="verse"><a class="ref" href="' + APP_URL + '" target="_blank" rel="noopener">' +
+              '<div class="verse"><a class="ref" href="' + DEEP[gid] + '" target="_blank" rel="noopener">' +
               esc(REFS[gid]) + "</a><p>" + highlight(TEXTS[gid], cur.word) + "</p></div>";
           }
           verseList.insertAdjacentHTML("beforeend", html);
