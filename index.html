@@ -259,6 +259,25 @@
       .empty-note { color: var(--ink-soft); font-size: 1.08rem; margin: 0.4rem 0 0; }
       .empty-note .try { color: var(--ink); }
       [hidden] { display: none !important; }
+      .home-pill {
+        position: fixed;
+        top: calc(0.6rem + env(safe-area-inset-top, 0px));
+        left: calc(0.6rem + env(safe-area-inset-left, 0px));
+        z-index: 50;
+        font-family: "EB Garamond", "Iowan Old Style", Georgia, serif;
+        font-size: 0.98rem;
+        font-weight: 600;
+        line-height: 1;
+        color: var(--gold-deep);
+        background: var(--card);
+        border: 1px solid var(--card-line);
+        border-radius: 999px;
+        box-shadow: var(--shadow);
+        padding: 0.42rem 0.85rem 0.48rem;
+        text-decoration: none;
+      }
+      .home-pill:hover { background: var(--gold-soft); }
+      .home-pill:active { transform: translateY(1px); }
       footer {
         text-align: center;
         color: var(--ink-soft);
@@ -270,6 +289,7 @@
     </style>
   </head>
   <body>
+    <a class="home-pill" href="https://jesuslovestyler.com/" aria-label="Home — back to jesuslovestyler.com">&#8962; Home</a>
     <div class="wrap">
       <header class="intro">
         <h1>WEB Concordance</h1>
