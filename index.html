@@ -359,7 +359,7 @@
         <div class="fin" aria-hidden="true">&#10086;</div>
         <p>
           Verse references open the
-          <a href="https://jesuslovestyler.github.io/World-English-Bible/" target="_blank" rel="noopener">World English Bible</a>
+          <a href="https://jesuslovestyler.github.io/World-English-Bible/">World English Bible</a>
           reader, where you can read each passage in its chapter.
         </p>
         <p>Made by Noki for Tyler. Public domain &mdash; share freely.</p>
@@ -533,6 +533,18 @@
           if (b) showWord(b.getAttribute("data-word"));
         });
 
+        /* ---------- remember search state so Back returns to the results ---------- */
+        var STATE_KEY = "webConcordanceState";
+        function saveState() {
+          if (!cur) return;
+          try {
+            sessionStorage.setItem(
+              STATE_KEY,
+              JSON.stringify({ word: cur.word, shown: cur.shown })
+            );
+          } catch (e) {}
+        }
+
         /* ---------- results ---------- */
         var cur = null; // { word, ids, shown }
         function showWord(word) {
@@ -558,7 +570,7 @@
           for (var i = cur.shown; i < end; i++) {
             var gid = cur.ids[i];
             html +=
-              '<div class="verse"><a class="ref" href="' + DEEP[gid] + '" target="_blank" rel="noopener">' +
+              '<div class="verse"><a class="ref" href="' + DEEP[gid] + '">' +
               esc(REFS[gid]) + "</a><p>" + highlight(TEXTS[gid], cur.word) + "</p></div>";
           }
           verseList.insertAdjacentHTML("beforeend", html);
@@ -572,6 +584,7 @@
             cur.ids.length > VERSE_BATCH
               ? "Showing " + fmt(cur.shown) + " of " + fmt(cur.ids.length) + " verses"
               : "";
+          saveState();
         }
         verseMoreBtn.addEventListener("click", renderMoreVerses);
         backBtn.addEventListener("click", function () {
@@ -619,6 +632,30 @@
           var b = ev.target.closest("button[data-word]");
           if (b) showWord(b.getAttribute("data-word"));
         });
+
+        /* ---------- restore the search on Back/Forward returns only ---------- */
+        (function restoreOnBack() {
+          var navType = "";
+          try {
+            var entries = performance.getEntriesByType("navigation");
+            if (entries && entries.length) navType = entries[0].type;
+            else if (performance.navigation) {
+              navType = performance.navigation.type === 1 ? "back_forward" : "";
+            }
+          } catch (e) {}
+          if (navType !== "back_forward") return;
+          var saved = null;
+          try {
+            saved = JSON.parse(sessionStorage.getItem(STATE_KEY) || "null");
+          } catch (e) {}
+          if (!saved || !saved.word || !IDX[saved.word]) return;
+          q.value = displayWord(saved.word);
+          showWord(saved.word);
+          var want = saved.shown || 0;
+          while (cur && cur.shown < want && cur.shown < cur.ids.length) {
+            renderMoreVerses();
+          }
+        })();
       })();
     </script>
   </body>
